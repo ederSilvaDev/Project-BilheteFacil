@@ -46,20 +46,19 @@ public class PessoaController {
 
 		
 		  if (bindingResult.hasErrors()) {
-			 ModelAndView modelAndView = new ModelAndView("cadastro/cadatropessoa"); 
-			 Iterable<Pessoa> pessoasIt = pessoaRepository.findAll(); 
-			 modelAndView.addObject("pessoas", pessoasIt);
-			 modelAndView.addObject("pessoaOj", pessoa);
+			  ModelAndView modelAndView = new
+			  ModelAndView("cadastro/cadastropessoa"); Iterable<Pessoa> pessoasIt =
+			  pessoaRepository.findAll(); modelAndView.addObject("pessoas", pessoasIt);
+			  modelAndView.addObject("pessoaOj", pessoa); /*DA O ERRO E CONTINUA NA TELA COM OS OBJETOS PREENCHIDOS*/
 		  
-		  //MOSTRAR A VILIDAÇÃO NA TELA 
-		  List<String> msg = new ArrayList<String>();
-		  for  (ObjectError objectError : bindingResult.getAllErrors()){
-		  msg.add(objectError.getDefaultMessage()); /*vem das anotações @NotEmpty*/
-		  
+			  //MOSTRAR A VALIDAÇÃO NA TELA 
+			  List<String> msg = new ArrayList<String>(); for
+			  (ObjectError objectError : bindingResult.getAllErrors()){ /*QUAIS SÃO OS ERROS*/
+			  msg.add(objectError.getDefaultMessage()); /*vem das anotações @NotEmpty*/
+			  
 		  }
 		  
-		  modelAndView.addObject("msg", msg);
-		  return modelAndView;
+		  modelAndView.addObject("msg", msg); return modelAndView;
 		  
 		  }
 		 
@@ -149,11 +148,29 @@ public class PessoaController {
 	public ModelAndView addfonePessoa(Telefone telefone, @PathVariable("pessoaid") Long pessoaid) {
 
 		Pessoa pessoa = pessoaRepository.findById(pessoaid).get();
-		telefone.setPessoa(pessoa);
+		
+		if(telefone != null && telefone.getNumero().isEmpty()){
+			
+			ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
+			modelAndView.addObject("pessoaOj", pessoa);
+			modelAndView.addObject("telefones", telefoneRepository.getTelefones(pessoaid));
+			
+			List<String> msg = new ArrayList<String>();
+			if (telefone.getNumero().isEmpty()) {
+				msg.add("Numero deve ser informado");
+			}
+						
+			modelAndView.addObject("msg", msg);
+			
+			return modelAndView;
+			
+		}
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
 
+		telefone.setPessoa(pessoa);
 		telefoneRepository.save(telefone);
 
-		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
 		modelAndView.addObject("pessoaOj", pessoa);
 		modelAndView.addObject("telefones", telefoneRepository.getTelefones(pessoaid));
 		return modelAndView;

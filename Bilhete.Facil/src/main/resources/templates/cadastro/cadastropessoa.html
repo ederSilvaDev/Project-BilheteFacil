@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"> <!-- /*IMPORTE DO THYMELEAF*/ --> 
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"> <!-- /*IMPORTE DO THYMELEAF*/ --> 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,53 +30,56 @@ html {
 <body>
 <div class="container">
 	<h2 align="center">Cadastro de Pessoa</h2>
-			 <br />
-				<div th:each = "m : ${msg}">
-					<span th:text="${m}" style="color: red"></span>
-				</div>
-			<br />
-	<form action="salvarpessoa" id="formpessoa" method="POST" th:object="${pessoaOj}" class="col s12">
-		<div class="mb-3">
-			<div class="row">
-				<div class="input-fiel col s6">
-					<label for="id" class="active">ID:</label>
-					<input class="form-control" name="id" th:field="*{id}" readonly="readonly">
-				</div>
-				<div class="input-fiel col s6">
-						<label for="nome" class="active">Nome:</label>
-						<input class="form-control" name="nome" th:field="*{nome}" >
-				</div>
+		<br />
+			<div th:each="m : ${msg}">
+				<span th:text="${m}" style="color: red"></span>
 			</div>
-			<div class="row">
-				<div class="input-field col s12">
-					<label for="sobrenome" class="active">Sobrenome:</label>
-						<input class="form-control" name="sobrenome" th:field="*{sobrenome}" >
+		<br />
+		<form action="salvarpessoa" id="formpessoa" method="POST"
+			th:object="${pessoaOj}" class="col s12">
+			<div class="mb-3">
+				<div class="row">
+					<div class="input-fiel col s6">
+						<label for="id" class="active">ID:</label> <input
+							class="form-control" name="id" th:field="*{id}"
+							readonly="readonly">
+					</div>
+					<div class="input-fiel col s6">
+						<label for="nome" class="active">Nome:</label> <input
+							class="form-control" name="nome" th:field="*{nome}">
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="input-field col s12">
-					<label for="idade" class="active">Idade:</label>
-					<input class="form-control" name="idade" th:field="*{idade}" >
+				<div class="row">
+					<div class="input-field col s12">
+						<label for="sobrenome" class="active">Sobrenome:</label> <input
+							class="form-control" name="sobrenome" th:field="*{sobrenome}">
+					</div>
 				</div>
-			</div>
-			
+				<div class="row">
+					<div class="input-field col s12">
+						<label for="idade" class="active">Idade:</label> <input
+							class="form-control" name="idade" th:field="*{idade}">
+					</div>
+				</div>
+
 				<div class="col-md-3">
-					<label for="sexo" class="form-label">Sexo</label>
-					<select	class="form-select" name="sexo" id="sexo" th:field="*{sexo}">
+					<label for="sexo" class="form-label">Sexo</label> <select
+						class="form-select" name="sexo" id="sexo" th:field="*{sexo}">
 						<option selected disabled value="">Selecione...</option>
 						<option value="Masculino">Masculino</option>
 						<option value="Feminino">Feminino</option>
-						<option value="Prefiro ñ informar">Prefiro ñ informar</option>			
+						<option value="Prefiro ñ informar">Prefiro ñ informar</option>
 					</select>
 				</div>
 
-				<br>
-			<input class="btn btn-success" type="submit" value="Salvar">
-		<!-- https://www.projetojavaweb.com/certificado-aluno/plataforma-curso/aulaatual/473056460/idcurso/1/idvideoaula/690  - 16:00 -->
-			<button class="btn btn-primary" onclick="document.getElementById('formpessoa').reset();">Novo</button>
-		</div>
-	</form>
-	<br>	
+				<br> <input class="btn btn-success" type="submit"
+					value="Salvar">
+				<!-- https://www.projetojavaweb.com/certificado-aluno/plataforma-curso/aulaatual/473056460/idcurso/1/idvideoaula/690  - 16:00 -->
+				<button class="btn btn-primary"
+					onclick="document.getElementById('formpessoa').reset();">Novo</button>
+			</div>
+		</form>
+		<br>	
 	<form action="pequisarpessoa" method="POST" class="col s12">
 				<div class="mb-3">
 					<div class="row">

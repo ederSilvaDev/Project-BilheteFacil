@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -25,16 +26,16 @@ public class Pessoa implements Serializable {
 	private long id;
 	
 	
-	@NotNull(message="Nulo ñ Permitido")
-	@NotEmpty(message="Vazio ñ Permitido")
+	@NotNull(message="Campo [Nome] Nulo !")
+	@NotEmpty(message="Campo [Nome] Vázio !")
 	private String nome;
 	
 	
-	//@NotNull(message="Nulo ñ Permitido")
-	//@NotEmpty(message="Vazio ñ Permitido")
+	@NotNull(message="Nulo ñ Permitido")
+	@NotEmpty(message="Vazio ñ Permitido")
 	private String sobrenome;
 	
-	//@Min(value = 18, message = "Idade inválida")
+	@Min(value = 18, message = "Idade inválida")
 	private String idade;
 	private String sexo;
 	

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"> <!-- /*IMPORTE DO THYMELEAF*/ --> 
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!-- xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"> /*IMPORTE DO THYMELEAF*/ --> 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,13 +50,13 @@ html {
 					</div>
 				</div>
 				<div class="row">
-					<div class="input-field col s12">
+					<div class="input-field col s12" >
 						<label for="sobrenome" class="active">Sobrenome:</label> <input
 							class="form-control" name="sobrenome" th:field="*{sobrenome}">
 					</div>
 				</div>
-				<div class="row">
-					<div class="input-field col s12">
+				<div class="row" sec:authorize="hasRole('ROLE_CAIXA')">
+					<div class="input-field col s12" > 
 						<label for="idade" class="active">Idade:</label> <input
 							class="form-control" name="idade" th:field="*{idade}">
 					</div>

@@ -28,11 +28,16 @@ public class Usuario implements UserDetails{
 	private String senha;
 	
 	/*https://www.projetojavaweb.com/certificado-aluno/plataforma-curso/aulaatual/473062281/idcurso/1/idvideoaula/702 - 11:00*/
+	
 	@OneToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "usuarios_role", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id", table = "usuario"),
-	inverseJoinColumns = @JoinColumn(name = "role_id" , referencedColumnName = "id", table = "role"))	
+	@JoinTable(name = "usuarios_role", 
+		joinColumns = @JoinColumn(name =
+		"usuario_id", referencedColumnName = "id", table = "usuario"), /*cria tabela de acesso do usuario*/
+					inverseJoinColumns = @JoinColumn(name = "role_id",
+										referencedColumnName = "id", table = "role"))	 
+	 	
 	private List<Role> roles;
-
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return roles;
@@ -40,12 +45,12 @@ public class Usuario implements UserDetails{
 
 	@Override
 	public String getPassword() {
-		return null;
+		return senha;
 	}
 
 	@Override
 	public String getUsername() {
-		return null;
+		return login;
 	}
 
 	@Override
@@ -91,8 +96,7 @@ public class Usuario implements UserDetails{
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-	
-	
-	
 
+	
+	
 }

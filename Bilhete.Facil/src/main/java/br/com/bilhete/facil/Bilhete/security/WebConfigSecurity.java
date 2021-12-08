@@ -22,9 +22,12 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private ImplementacaoUserDetailsService implementacaoUserDetailsService;
 
+	/*https://www.projetojavaweb.com/certificado-aluno/plataforma-curso/aulaatual/473063134/idcurso/1/idvideoaula/704*/
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, "/").permitAll().anyRequest()
+		http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, "/").permitAll()
+				.antMatchers(HttpMethod.GET, "/cadastropessoa").hasAnyRole("ADMIN", "CAIXA")
+				.anyRequest()
 				.authenticated().and().formLogin().permitAll().and().logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
 

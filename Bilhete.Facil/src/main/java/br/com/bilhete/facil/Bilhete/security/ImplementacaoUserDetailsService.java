@@ -6,11 +6,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.bilhete.facil.Bilhete.model.Usuario;
 import br.com.bilhete.facil.Bilhete.repository.UsuarioRepository;
 
 @Service
+@Transactional
 public class ImplementacaoUserDetailsService implements UserDetailsService{
 
 	@Autowired

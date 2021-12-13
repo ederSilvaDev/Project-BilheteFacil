@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!-- xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"> /*IMPORTE DO THYMELEAF*/ -->
+<head>
+<meta charset="UTF-8">
+<!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link type="text/css" rel="stylesheet" href="//css/bootstrap.min.css"> -->
+<!-- <link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+	integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+	crossorigin="anonymous"> -->
+
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<title>Acesso ao Sistema</title>
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+	crossorigin="anonymous">
+<!-- <link
+	href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css"
+	rel="stylesheet" crossorigin="anonymous" /> -->
+</head>
+<body>
+	<div class="container" align="center">
+		<form th:action="@{/login}" method="post"> <!-- INTERCEPITAR O A TELA DE LOGIN --> 
+			<h2 class="form-signin-heading">Informe suas Credências</h2>
+			<p>
+				<label for="username" class="sr-only">Usuario</label> <input
+					type="text" id="username" name="username" placeholder="Usuario" required autofocus>
+			</p>
+			<p>
+				<label for="password" class="sr-only">Senha</label> <input
+					type="password" id="password" name="password" placeholder="Senha" required>
+			</p>
+			<button class="btn btn-lg btn-primary" type="submit">Entrar</button>
+		</form>
+	</div>
+</body>
+</html>

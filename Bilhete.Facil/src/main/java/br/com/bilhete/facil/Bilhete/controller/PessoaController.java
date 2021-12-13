@@ -44,6 +44,9 @@ public class PessoaController {
 	@RequestMapping(method = RequestMethod.POST, value = "**/salvarpessoa")
 	public ModelAndView salvar(@Valid Pessoa pessoa, BindingResult bindingResult) {
 
+		//CARREGAR OS NUMEROS DE TELEFONES PARA O OBJETO PESSSOA, ISSO É NECESSÁRIO DEVIDO AO ERRO QUE 
+		//OCORRE AO TENTAR SALVAR UM REGISTRO EM EDIÇÃO
+		pessoa.setTelefones(telefoneRepository.getTelefones(pessoa.getId()));
 		
 		  if (bindingResult.hasErrors()) {
 			  ModelAndView modelAndView = new

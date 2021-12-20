@@ -34,8 +34,22 @@ html {
     min-width: 0;
     padding: -1%; 
     margin: 0; 
-    border: 8%;  
+    border: 1%;
    }
+   
+   legend {
+    background-color: #000;
+    color: #fff;
+    padding: 3px 3px;
+	}
+
+	.output {
+    font: 1rem 'Fira Sans', sans-serif;
+	}
+
+	input {
+	    margin: .4rem;
+	}
 	
 </style>
 <!-- Adicionando Javascript -->
@@ -194,22 +208,32 @@ html {
 			
 		</form>
 		<br>	
-	<form action="pequisarpessoa" method="POST" class="input-field col s12">
-					<div class="row">
-							<div>
-								<label for="nomepesquisa" class="active" style="font-style: oblique;">Pequisa Registro:</label>							
-							</div>	
-							<div class="col-md-2">
-								<input class="btn btn-success" type="submit" value="Buscar">
-							</div>
-							<div class="col-md-8">
-								<input class="form-control" name="nomepesquisa" required>
-							</div>
-							<div class="col-md-2">
-								<a class="btn btn-primary" href="/listatodos">Lista Pessoas</a>
-							</div>							
+		<fieldset>
+			<legend>Pesquisa de Registros</legend>
+			<form action="pequisarpessoa" method="POST"
+				class="input-field col s12">
+				<div class="row">
+					<div class="input-field col s6">
+						<label for="nomepesquisa" class="active"
+							style="font-style: oblique;"> Registro</label> <input
+							class="form-control" name="nomepesquisa" required>
 					</div>
-	</form>	
+					<div class="input-field col s6">
+						<label>Sexo</label> <select class="form-select my-1"
+							name="pesqsexo" id="pesqsexo">
+							<option value="">--[Todos]--</option>
+							<option value="Masculino" th:text="Masculino" />
+							<option value="Feminino" th:text="Feminino" />
+						</select>
+					</div>
+				</div>
+				<div>
+					<input class="btn btn-success" type="submit" value="Buscar">
+					<a class="btn btn-primary" href="/listatodos">Lista Pessoas</a>
+				</div>
+
+			</form>
+		</fieldset>
 	<br>
 	<table class="table">
 		<thead>

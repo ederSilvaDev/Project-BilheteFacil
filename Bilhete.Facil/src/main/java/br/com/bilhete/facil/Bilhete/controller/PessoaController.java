@@ -49,19 +49,20 @@ public class PessoaController {
 		pessoa.setTelefones(telefoneRepository.getTelefones(pessoa.getId()));
 		
 		  if (bindingResult.hasErrors()) {
-			  ModelAndView modelAndView = new
-			  ModelAndView("cadastro/cadastropessoa"); Iterable<Pessoa> pessoasIt =
-			  pessoaRepository.findAll(); modelAndView.addObject("pessoas", pessoasIt);
+			  ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
+			  Iterable<Pessoa> pessoasIt = pessoaRepository.findAll();
+			  modelAndView.addObject("pessoas", pessoasIt);
 			  modelAndView.addObject("pessoaOj", pessoa); /*DA O ERRO E CONTINUA NA TELA COM OS OBJETOS PREENCHIDOS*/
 		  
 			  //MOSTRAR A VALIDAÇÃO NA TELA 
-			  List<String> msg = new ArrayList<String>(); for
-			  (ObjectError objectError : bindingResult.getAllErrors()){ /*QUAIS SÃO OS ERROS*/
+			  List<String> msg = new ArrayList<String>();
+			  for (ObjectError objectError : bindingResult.getAllErrors()){ /*QUAIS SÃO OS ERROS*/
 			  msg.add(objectError.getDefaultMessage()); /*vem das anotações @NotEmpty*/
 			  
 		  }
 		  
-		  modelAndView.addObject("msg", msg); return modelAndView;
+		  modelAndView.addObject("msg", msg);
+		  return modelAndView;
 		  
 		  }
 		 
@@ -91,8 +92,8 @@ public class PessoaController {
 	@GetMapping("/editarpessoa/{idpessoa}")
 	public ModelAndView editar(@PathVariable("idpessoa") Long idpessoa) {
 
-		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
 		Optional<Pessoa> pessoa = pessoaRepository.findById(idpessoa);
+		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
 		modelAndView.addObject("pessoaOj", pessoa.get());
 		return modelAndView;
 
@@ -115,14 +116,23 @@ public class PessoaController {
 	 * 473056094/idcurso/1/idvideoaula/689 - 9:00
 	 */
 	@PostMapping("**/pequisarpessoa") /* INTERCEPITAR A URL E PEGAR O VALOR DA VARIAVEL NOMEPESQUISA */
-	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa) {
-		ModelAndView modelAndView = new ModelAndView(
-				"cadastro/cadastropessoa"); /* CONSULTA E RETONA NA MESMA TELA DE CADASTRO */
+	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa, @RequestParam("pesqsexo") String pesqsexo) {		
+		
+		
+		List<Pessoa> pessoas = new ArrayList<Pessoa>();
+
+		if (pesqsexo != null && !pesqsexo.isEmpty()) {
+			pessoas = pessoaRepository.findPessoaByNameSexo(nomepesquisa, pesqsexo);
+		} else {
+			pessoas = pessoaRepository.findPessoaByName(nomepesquisa);
+		} 
+		
 		/* adicionar o objeto para a variavel pessoas */ /*
-															 * vai consultar todos os registro de acordo com a valor da
-															 * variavel informanda
-															 */
-		modelAndView.addObject("pessoas", pessoaRepository.findPessoaByName(nomepesquisa));
+		 * vai consultar todos os registro de acordo com a valor da
+		 * variavel informanda
+		 */
+		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa"); /* CONSULTA E RETONA NA MESMA TELA DE CADASTRO */
+		modelAndView.addObject("pessoas", pessoas);
 		modelAndView.addObject("pessoaOj", new Pessoa()); /* como é mesma tela ele esta mando um objeto limpo */
 		return modelAndView;
 
@@ -130,10 +140,11 @@ public class PessoaController {
 
 	@GetMapping("/telefones/{idpessoa}") /* METODO QUE CARREGA OS DADOS DA PESSOA VINDO DO LINK GERADO */
 	public ModelAndView telefones(@PathVariable("idpessoa") Long idpessoa) {
-
-		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
 		Optional<Pessoa> pessoa = pessoaRepository.findById(idpessoa);
+		
+		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
 		modelAndView.addObject("pessoaOj", pessoa.get());
+		modelAndView.addObject("msg", new ArrayList<String>());
 		/*
 		 * https://www.projetojavaweb.com/certificado-aluno/plataforma-curso/aulaatual/
 		 * 473059315/idcurso/1/idvideoaula/694 - 07:30
@@ -147,7 +158,7 @@ public class PessoaController {
 	 * https://www.projetojavaweb.com/certificado-aluno/plataforma-curso/aulaatual/
 	 * 473058594/idcurso/1/idvideoaula/693 - 19:05
 	 */
-	@PostMapping("**/addfonePessoa/{pessoaid}")
+	@PostMapping("**/addfonePessoa/{pessoaid}") /*METODO DE ADICIONA NUMERO E TIPO DE TELEFONE A PESSOA*/
 	public ModelAndView addfonePessoa(Telefone telefone, @PathVariable("pessoaid") Long pessoaid) {
 
 		Pessoa pessoa = pessoaRepository.findById(pessoaid).get();

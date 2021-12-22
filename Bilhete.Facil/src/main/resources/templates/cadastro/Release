@@ -12,4 +12,11 @@
 		
 20/12/2021
 	versão 1.4 - Busca por Registro + Selecão por Combo     
-	
+
+22/12/2021
+	versão 1.5 -  Criação de relatório usando Jasper
+					CRIAR O METODO QUE CHAMA O RELATÓRIO    
+					Instanciar a class ReportUtil na classe PessaoController
+					COMBO-BOX (DO BANCO) PROFISSÃO
+					COMBO USANDO ENUM.
+					INCLUINDO CAMPO DATE NO CADASTRO DE PESSOA.

@@ -1,17 +1,25 @@
 package br.com.bilhete.facil.Bilhete.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 @Entity /*PARA QUE ESSE CLASSE VIRE UMA TABELA NO BANCO */
@@ -43,7 +51,17 @@ public class Pessoa implements Serializable{
 	private String uf;
 	private String ibge; 
 	private String documento;
-
+	
+	@ManyToOne
+	private Profissao profissao;	
+	
+	@Enumerated(EnumType.STRING)
+	private Cargo cargo;
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Temporal(TemporalType.DATE)
+	private Date DataNascimento;
+	
 	@OneToMany(mappedBy = "pessoa", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Telefone> telefones;	
 
@@ -150,6 +168,28 @@ public class Pessoa implements Serializable{
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
-		
+
+	public void setProfissao(Profissao profissao) {
+		this.profissao = profissao;
+	}
 	
+	public Profissao getProfissao() {
+		return profissao;
+	}
+	
+	public void setCargo(Cargo cargo) {
+		this.cargo = cargo;
+	}
+	
+	public Cargo getCargo() {
+		return cargo;
+	}
+	
+	public void setDataNascimento(Date dataNascimento) {
+		DataNascimento = dataNascimento;
+	}
+	
+	public Date getDataNascimento() {
+		return DataNascimento;
+	}
 }

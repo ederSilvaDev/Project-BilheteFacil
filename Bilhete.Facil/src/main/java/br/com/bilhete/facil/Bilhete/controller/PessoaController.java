@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import br.com.bilhete.facil.Bilhete.model.Pessoa;
 import br.com.bilhete.facil.Bilhete.model.Telefone;
 import br.com.bilhete.facil.Bilhete.repository.PessoaRepository;
+import br.com.bilhete.facil.Bilhete.repository.ProfissaoRepository;
 import br.com.bilhete.facil.Bilhete.repository.TelefoneRepository;
 
 @Controller
@@ -32,40 +35,47 @@ public class PessoaController {
 	@Autowired
 	private TelefoneRepository telefoneRepository;
 
+	@Autowired
+	private ReportUtil reportUtil;
+	
+	@Autowired
+	private ProfissaoRepository profissaoRepository; 
+
 	@RequestMapping(method = RequestMethod.GET, value = "/cadastropessoa")
 	public ModelAndView inicio() {
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
 		modelAndView.addObject("pessoaOj", new Pessoa());
 		Iterable<Pessoa> pessoaIt = pessoaRepository.findAll();
 		modelAndView.addObject("pessoas", pessoaIt);
+		modelAndView.addObject("profissoes", profissaoRepository.findAll());
 		return modelAndView;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "**/salvarpessoa")
 	public ModelAndView salvar(@Valid Pessoa pessoa, BindingResult bindingResult) {
 
-		//CARREGAR OS NUMEROS DE TELEFONES PARA O OBJETO PESSSOA, ISSO É NECESSÁRIO DEVIDO AO ERRO QUE 
-		//OCORRE AO TENTAR SALVAR UM REGISTRO EM EDIÇÃO
+		// CARREGAR OS NUMEROS DE TELEFONES PARA O OBJETO PESSSOA, ISSO É NECESSÁRIO
+		// DEVIDO AO ERRO QUE
+		// OCORRE AO TENTAR SALVAR UM REGISTRO EM EDIÇÃO
 		pessoa.setTelefones(telefoneRepository.getTelefones(pessoa.getId()));
-		
-		  if (bindingResult.hasErrors()) {
-			  ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
-			  Iterable<Pessoa> pessoasIt = pessoaRepository.findAll();
-			  modelAndView.addObject("pessoas", pessoasIt);
-			  modelAndView.addObject("pessoaOj", pessoa); /*DA O ERRO E CONTINUA NA TELA COM OS OBJETOS PREENCHIDOS*/
-		  
-			  //MOSTRAR A VALIDAÇÃO NA TELA 
-			  List<String> msg = new ArrayList<String>();
-			  for (ObjectError objectError : bindingResult.getAllErrors()){ /*QUAIS SÃO OS ERROS*/
-			  msg.add(objectError.getDefaultMessage()); /*vem das anotações @NotEmpty*/
-			  
-		  }
-		  
-		  modelAndView.addObject("msg", msg);
-		  return modelAndView;
-		  
-		  }
-		 
+
+		if (bindingResult.hasErrors()) {
+			ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
+			Iterable<Pessoa> pessoasIt = pessoaRepository.findAll();
+			modelAndView.addObject("pessoas", pessoasIt);
+			modelAndView.addObject("pessoaOj", pessoa); /* DA O ERRO E CONTINUA NA TELA COM OS OBJETOS PREENCHIDOS */
+
+			// MOSTRAR A VALIDAÇÃO NA TELA
+			List<String> msg = new ArrayList<String>();
+			for (ObjectError objectError : bindingResult.getAllErrors()) { /* QUAIS SÃO OS ERROS */
+				msg.add(objectError.getDefaultMessage()); /* vem das anotações @NotEmpty */
+
+			}
+
+			modelAndView.addObject("msg", msg);
+			return modelAndView;
+
+		}
 
 		pessoaRepository.save(pessoa);
 
@@ -95,6 +105,7 @@ public class PessoaController {
 		Optional<Pessoa> pessoa = pessoaRepository.findById(idpessoa);
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
 		modelAndView.addObject("pessoaOj", pessoa.get());
+		modelAndView.addObject("profissoes", profissaoRepository.findAll());
 		return modelAndView;
 
 	}
@@ -116,32 +127,71 @@ public class PessoaController {
 	 * 473056094/idcurso/1/idvideoaula/689 - 9:00
 	 */
 	@PostMapping("**/pequisarpessoa") /* INTERCEPITAR A URL E PEGAR O VALOR DA VARIAVEL NOMEPESQUISA */
-	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa, @RequestParam("pesqsexo") String pesqsexo) {		
-		
-		
+	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa,
+			@RequestParam("pesqsexo") String pesqsexo) {
+
 		List<Pessoa> pessoas = new ArrayList<Pessoa>();
 
 		if (pesqsexo != null && !pesqsexo.isEmpty()) {
 			pessoas = pessoaRepository.findPessoaByNameSexo(nomepesquisa, pesqsexo);
 		} else {
 			pessoas = pessoaRepository.findPessoaByName(nomepesquisa);
-		} 
-		
+		}
+
 		/* adicionar o objeto para a variavel pessoas */ /*
-		 * vai consultar todos os registro de acordo com a valor da
-		 * variavel informanda
-		 */
-		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa"); /* CONSULTA E RETONA NA MESMA TELA DE CADASTRO */
+															 * vai consultar todos os registro de acordo com a valor da
+															 * variavel informanda
+															 */
+		ModelAndView modelAndView = new ModelAndView(
+				"cadastro/cadastropessoa"); /* CONSULTA E RETONA NA MESMA TELA DE CADASTRO */
 		modelAndView.addObject("pessoas", pessoas);
 		modelAndView.addObject("pessoaOj", new Pessoa()); /* como é mesma tela ele esta mando um objeto limpo */
 		return modelAndView;
 
 	}
 
+	@GetMapping("**/pequisarpessoa") /* METODO QUE PEGA O RESULTADO DOS DADOS QUE ESTÃO NA TELA E IMPRIMI EM PDF */
+	public void imprimepdf(@RequestParam("nomepesquisa") String nomepesquisa, @RequestParam("pesqsexo") String pesqsexo,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		
+		  List<Pessoa> pessoas = new ArrayList<Pessoa>();
+		  
+			if (pesqsexo != null && !pesqsexo.isEmpty() && nomepesquisa != null && !nomepesquisa.isEmpty()) {
+				/* Busca por nome e sexo */ pessoas = pessoaRepository.findPessoaByNameSexo(nomepesquisa, pesqsexo);
+			} else if (nomepesquisa != null && !nomepesquisa.isEmpty()) { /* Busca por nome */
+				pessoas = pessoaRepository.findPessoaByName(nomepesquisa);
+
+			} else if (pesqsexo != null && !pesqsexo.isEmpty()) {/* Busca somente por sexo */
+				pessoas = pessoaRepository.findPessoaBySexo(pesqsexo);
+
+			} else {
+				Iterable<Pessoa> iterator = pessoaRepository.findAll();
+				for (Pessoa pessoa : iterator) { /* BUSCA TODOS */ 
+					pessoas.add(pessoa);
+				}
+			}
+		 
+
+		/* CHAMA O SERVIÇO QUE FAZ A GERAÇÃO DO RELATORIO */
+		byte[] pdf = reportUtil.gerarRelatorio(pessoas, "pessoa", request.getServletContext());
+
+		response.setContentLength(pdf.length);
+
+		response.setContentType("application/octet-stream");
+
+		String headerkey = "Content-Disposition";
+		String headerValue = String.format("attachment; filename=\"%s\"", "relatorio.pdf");
+		response.setHeader(headerkey, headerValue);
+
+		response.getOutputStream().write(pdf); 
+
+	}
+
 	@GetMapping("/telefones/{idpessoa}") /* METODO QUE CARREGA OS DADOS DA PESSOA VINDO DO LINK GERADO */
 	public ModelAndView telefones(@PathVariable("idpessoa") Long idpessoa) {
 		Optional<Pessoa> pessoa = pessoaRepository.findById(idpessoa);
-		
+
 		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
 		modelAndView.addObject("pessoaOj", pessoa.get());
 		modelAndView.addObject("msg", new ArrayList<String>());
@@ -158,28 +208,28 @@ public class PessoaController {
 	 * https://www.projetojavaweb.com/certificado-aluno/plataforma-curso/aulaatual/
 	 * 473058594/idcurso/1/idvideoaula/693 - 19:05
 	 */
-	@PostMapping("**/addfonePessoa/{pessoaid}") /*METODO DE ADICIONA NUMERO E TIPO DE TELEFONE A PESSOA*/
+	@PostMapping("**/addfonePessoa/{pessoaid}") /* METODO DE ADICIONA NUMERO E TIPO DE TELEFONE A PESSOA */
 	public ModelAndView addfonePessoa(Telefone telefone, @PathVariable("pessoaid") Long pessoaid) {
 
 		Pessoa pessoa = pessoaRepository.findById(pessoaid).get();
-		
-		if(telefone != null && telefone.getNumero().isEmpty()){
-			
+
+		if (telefone != null && telefone.getNumero().isEmpty()) {
+
 			ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
 			modelAndView.addObject("pessoaOj", pessoa);
 			modelAndView.addObject("telefones", telefoneRepository.getTelefones(pessoaid));
-			
+
 			List<String> msg = new ArrayList<String>();
 			if (telefone.getNumero().isEmpty()) {
 				msg.add("Numero deve ser informado");
 			}
-						
+
 			modelAndView.addObject("msg", msg);
-			
+
 			return modelAndView;
-			
+
 		}
-		
+
 		ModelAndView modelAndView = new ModelAndView("cadastro/telefones");
 
 		telefone.setPessoa(pessoa);
